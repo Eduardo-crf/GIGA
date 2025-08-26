@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIGA+ Fibra - Planos de Internet</title>
+    
+    <!-- Chosen Palette: Giga+ Vibrant -->
+    <!-- Application Structure Plan: O design do dashboard de página única agora integra botões de recomendação de perfil (home office, gamer) com cards de plano detalhados. O fluxo do usuário é mais guiado: o usuário clica em um perfil de uso, a página rola para os cards e o plano ideal é destacado no grid e no gráfico. Isso oferece uma experiência mais interativa e personalizada, mantendo a opção de explorar cada plano individualmente ao clicar nos cards. O fluxo é: Título -> Seletores de Perfil -> Gráfico Central -> Cards de Plano Interativos -> Benefícios -> CTA final. -->
+    <!-- Visualization & Content Choices:
+    - Dados de Velocidade -> Objetivo: Comparar -> Método: Gráfico de Barras Agrupadas com Chart.js (Canvas) -> Interação: Clique nos cards para destacar as barras de download e upload do plano correspondente. Justificativa: Permite uma comparação visual imediata e detalhada das métricas de cada plano.
+    - Planos e Descrições -> Objetivo: Organizar/Informar -> Método: Cards HTML interativos em grade -> Interação: O clique no card dispara o destaque no gráfico e no próprio card. Justificativa: Centraliza a informação do plano e seu uso específico em um único elemento interativo.
+    - Seletores de Perfil -> Objetivo: Recomendar -> Método: Botões de perfil com JS -> Interação: O clique no botão navega para a seção de planos e destaca o plano recomendado. Justificativa: Agiliza a jornada do usuário, oferecendo uma recomendação direta e personalizada com base em seu uso.
+    - Benefícios Principais -> Objetivo: Informar -> Método: Flexbox HTML/CSS com ícones Unicode -> Interação: Nenhuma. Justificativa: Informação complementar de forma clara e scannable.
+    - CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'giga-dark-blue': '#161B48',
+                        'giga-blue': '#1F2A70',
+                        'giga-light-blue': '#3B5AF7',
+                        'giga-green': '#00D15D',
+                        'giga-white': '#FFFFFF',
+                        'giga-bg': '#f8fafc',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 40vh;
+        }
+         @media (min-width: 768px) { .chart-container { height: 400px; } }
+        .plan-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            cursor: pointer;
+        }
+        .plan-card.highlighted {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 25px -5px rgba(0, 209, 93, 0.2), 0 10px 10px -5px rgba(0, 209, 93, 0.1);
+            border-color: #00D15D;
+        }
+    </style>
+</head>
+<body class="bg-giga-bg font-sans">
+
+    <div class="container mx-auto p-4 md:p-8">
+
+        <header class="text-center my-8 md:my-12">
+            <h1 class="text-4xl md:text-6xl font-black text-giga-dark-blue">
+                GIGA+ <span class="text-giga-green">Fibra</span>
+            </h1>
+            <p class="text-lg md:text-xl text-giga-blue mt-2">A conexão de verdade que você merece, por um preço que cabe no seu bolso.</p>
+        </header>
+
+        <main>
+            <section id="plan-selector" class="mb-16 md:mb-24">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-giga-dark-blue">Qual plano é ideal para você?</h2>
+                    <p class="text-gray-600 mt-2">Selecione seu perfil de uso e veja nossa recomendação.</p>
+                </div>
+                <div class="flex justify-center flex-wrap gap-3 md:gap-4 mb-10">
+                    <button onclick="recommendPlan('uso básico')" class="px-6 py-2 bg-giga-white border-2 border-gray-200 rounded-full font-semibold text-giga-blue hover:bg-giga-green hover:text-white hover:border-giga-green transition-all">🏠 Uso Básico</button>
+                    <button onclick="recommendPlan('streaming e home office')" class="px-6 py-2 bg-giga-white border-2 border-gray-200 rounded-full font-semibold text-giga-blue hover:bg-giga-green hover:text-white hover:border-giga-green transition-all">👨‍💻 Home Office & Streaming</button>
+                    <button onclick="recommendPlan('gamers e criadores de conteúdo')" class="px-6 py-2 bg-giga-white border-2 border-gray-200 rounded-full font-semibold text-giga-blue hover:bg-giga-green hover:text-white hover:border-giga-green transition-all">🎮 Gamers & Criadores de Conteúdo</button>
+                    <button onclick="recommendPlan('famílias grandes e heavy users')" class="px-6 py-2 bg-giga-white border-2 border-gray-200 rounded-full font-semibold text-giga-blue hover:bg-giga-green hover:text-white hover:border-giga-green transition-all">👨‍👩‍👧‍👦 Família & Muitos Usuários</button>
+                </div>
+            </section>
+            
+            <section id="dashboard" class="mb-16 md:mb-24">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-giga-dark-blue">Compare as Velocidades</h2>
+                    <p class="text-gray-600 mt-2">Clique em um plano para visualizar sua performance de download e upload.</p>
+                </div>
+                <div class="bg-white p-4 md:p-6 rounded-2xl shadow-lg">
+                    <div class="chart-container">
+                        <canvas id="speedChart"></canvas>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="planos-grid" class="mb-16 md:mb-24">
+                <div id="plans-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
+                </div>
+            </section>
+
+            <section id="why-giga" class="mb-16 md:mb-24 bg-giga-blue text-white rounded-2xl p-8 md:p-12 shadow-xl">
+                <h2 class="text-3xl font-bold text-center mb-8">Por que escolher a GIGA+?</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+                    <div class="flex flex-col items-center">
+                        <span class="text-5xl mb-2">🚀</span>
+                        <h3 class="font-bold text-xl mb-1">100% Fibra Óptica</h3>
+                        <p class="opacity-80">Velocidade e estabilidade até dentro da sua casa.</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <span class="text-5xl mb-2">📶</span>
+                        <h3 class="font-bold text-xl mb-1">Wi-Fi 6 de Ponta</h3>
+                        <p class="opacity-80">Mais dispositivos conectados sem perder performance.</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <span class="text-5xl mb-2">🛠️</span>
+                        <h3 class="font-bold text-xl mb-1">Instalação Grátis</h3>
+                        <p class="opacity-80">Contrate hoje sem custo de instalação.</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <span class="text-5xl mb-2">💬</span>
+                        <h3 class="font-bold text-xl mb-1">Suporte via WhatsApp</h3>
+                        <p class="opacity-80">Atendimento rápido e descomplicado.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="final-cta" class="text-center py-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-giga-dark-blue">Pronto para ter uma conexão de verdade?</h2>
+                <p class="text-gray-600 mt-2 mb-8 text-lg">Fale com nossa equipe e verifique a cobertura para sua região em poucos minutos.</p>
+                <a href="https://wa.me/5522997907703" target="_blank" class="bg-giga-green text-white font-bold text-xl px-10 py-4 rounded-full shadow-lg hover:bg-green-600 transition-transform transform hover:scale-105 inline-block">
+                    Conversar no WhatsApp
+                </a>
+            </section>
+        </main>
+
+        <footer class="text-center text-gray-500 border-t pt-8 mt-8">
+            <p>&copy; 2025 GIGA+ Fibra. Todos os direitos reservados.</p>
+        </footer>
+
+    </div>
+
+    <script>
+        const plansData = [
+            { id: '400', name: '400 MEGA', download: 400, upload: 200, price: '79,99', originalPrice: '99,99', wifi6: false, description: 'Ideal para redes sociais, e-mails e vídeos em HD.', useCase: 'uso básico' },
+            { id: '600', name: '600 MEGA', download: 600, upload: 300, price: '99,99', originalPrice: '119,99', wifi6: true, description: 'Perfeito para streaming 4K, home office e vários aparelhos.', useCase: 'streaming e home office' },
+            { id: '800', name: '800 MEGA', download: 800, upload: 400, price: '119,99', originalPrice: '139,99', wifi6: true, description: 'Alta performance para jogos online e uploads pesados.', useCase: 'gamers e criadores de conteúdo' },
+            { id: '920', name: 'GIGA+', download: 920, upload: 460, price: '139,99', originalPrice: '159,99', wifi6: true, speedLabel: '920 MEGA', description: 'A experiência máxima de velocidade para quem quer tudo.', useCase: 'famílias grandes e Muitos Usuários' }
+        ];
+
+        const plansGrid = document.getElementById('plans-grid');
+        let speedChart;
+
+        const createPlanCards = () => {
+            plansGrid.innerHTML = '';
+            plansData.forEach((plan, index) => {
+                const card = document.createElement('div');
+                card.id = `plan-${plan.id}`;
+                card.className = 'plan-card bg-white rounded-2xl shadow-lg p-6 border-4 border-transparent flex flex-col';
+                card.setAttribute('data-plan-id', plan.id);
+                card.innerHTML = `
+                    <div class="text-center">
+                        <h3 class="text-2xl font-bold text-giga-blue">${plan.speedLabel || plan.name}</h3>
+                        ${plan.wifi6 ? '<span class="text-xs font-bold bg-giga-green text-white px-2 py-1 rounded-full">WI-FI 6</span>' : '<div class="h-6"></div>'}
+                    </div>
+                    <div class="text-center my-4">
+                        <p class="text-xs text-gray-500 font-semibold mb-1">Para: ${plan.useCase}</p>
+                        <span class="text-sm text-gray-400 line-through">R$ ${plan.originalPrice}</span>
+                        <p class="text-4xl font-extrabold text-giga-dark-blue">R$ ${plan.price}<span class="text-lg font-semibold text-gray-500">/mês</span></p>
+                        <p class="text-xs text-gray-500">nos 3 primeiros meses</p>
+                    </div>
+                    <p class="text-gray-600 text-sm text-center flex-grow">${plan.description}</p>
+                    <a href="https://wa.me/5522997907703" target="_blank" class="mt-6 w-full text-center bg-giga-green text-white font-bold py-3 rounded-lg hover:bg-green-600 transition-colors">Contratar</a>
+                `;
+                card.addEventListener('click', () => selectPlan(plan.id));
+                plansGrid.appendChild(card);
+            });
+        };
+
+        const updateChartHighlight = (highlightedIndex = -1) => {
+            const downloadColors = plansData.map((_, index) => index === highlightedIndex ? '#1F2A70' : '#3B5AF7');
+            const uploadColors = plansData.map((_, index) => index === highlightedIndex ? '#00D15D' : '#00b34f');
+
+            if (speedChart) {
+                speedChart.data.datasets[0].backgroundColor = downloadColors;
+                speedChart.data.datasets[1].backgroundColor = uploadColors;
+                speedChart.update();
+            }
+        };
+
+        const createChart = () => {
+            const ctx = document.getElementById('speedChart').getContext('2d');
+            speedChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: plansData.map(p => p.speedLabel || p.name),
+                    datasets: [{
+                        label: 'Download (Mbps)',
+                        data: plansData.map(p => p.download),
+                        backgroundColor: plansData.map(() => '#3B5AF7'),
+                        borderColor: 'rgba(255, 255, 255, 0.2)',
+                        borderWidth: 1,
+                        borderRadius: 8,
+                        categoryPercentage: 0.8,
+                        barPercentage: 0.8,
+                    },
+                    {
+                        label: 'Upload (Mbps)',
+                        data: plansData.map(p => p.upload),
+                        backgroundColor: plansData.map(() => '#00b34f'),
+                        borderColor: 'rgba(255, 255, 255, 0.2)',
+                        borderWidth: 1,
+                        borderRadius: 8,
+                        categoryPercentage: 0.8,
+                        barPercentage: 0.8,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
+                            },
+                            ticks: {
+                                font: {
+                                    family: "'Inter', sans-serif",
+                                }
+                            }
+                        },
+                        y: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                font: {
+                                    family: "'Inter', sans-serif",
+                                    size: 14,
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            labels: {
+                                font: {
+                                    family: "'Inter', sans-serif",
+                                }
+                            }
+                        },
+                        tooltip: {
+                            enabled: true,
+                            backgroundColor: '#161B48',
+                            titleFont: {
+                                family: "'Inter', sans-serif",
+                                size: 16,
+                            },
+                            bodyFont: {
+                                family: "'Inter', sans-serif",
+                                size: 14,
+                            },
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.dataset.label || '';
+                                    const value = context.raw;
+                                    return ` ${label}: ${value} Mbps`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        };
+
+        const selectPlan = (planId) => {
+            document.querySelectorAll('.plan-card').forEach(card => card.classList.remove('highlighted'));
+            const selectedCard = document.getElementById(`plan-${planId}`);
+            if (selectedCard) {
+                selectedCard.classList.add('highlighted');
+                const planIndex = plansData.findIndex(p => p.id === planId);
+                updateChartHighlight(planIndex);
+            }
+        };
+        
+        const recommendPlan = (useCase) => {
+            const recommendedPlan = plansData.find(p => p.useCase === useCase);
+            if (recommendedPlan) {
+                selectPlan(recommendedPlan.id);
+            }
+            const element = document.getElementById('planos-grid');
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        };
+
+        window.onload = () => {
+            createPlanCards();
+            createChart();
+        };
+
+    </script>
+</body>
+</html>
