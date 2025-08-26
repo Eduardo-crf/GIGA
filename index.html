@@ -4,19 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GIGA+ Fibra - Planos de Internet</title>
-    
-    <!-- Chosen Palette: Giga+ Vibrant -->
-    <!-- Application Structure Plan: O design do dashboard de página única agora integra botões de recomendação de perfil (home office, gamer) com cards de plano detalhados. O fluxo do usuário é mais guiado: o usuário clica em um perfil de uso, a página rola para os cards e o plano ideal é destacado no grid e no gráfico. Isso oferece uma experiência mais interativa e personalizada, mantendo a opção de explorar cada plano individualmente ao clicar nos cards. O fluxo é: Título -> Seletores de Perfil -> Gráfico Central -> Cards de Plano Interativos -> Benefícios -> CTA final. -->
-    <!-- Visualization & Content Choices:
-    - Dados de Velocidade -> Objetivo: Comparar -> Método: Gráfico de Barras Agrupadas com Chart.js (Canvas) -> Interação: Clique nos cards para destacar as barras de download e upload do plano correspondente. Justificativa: Permite uma comparação visual imediata e detalhada das métricas de cada plano.
-    - Planos e Descrições -> Objetivo: Organizar/Informar -> Método: Cards HTML interativos em grade -> Interação: O clique no card dispara o destaque no gráfico e no próprio card. Justificativa: Centraliza a informação do plano e seu uso específico em um único elemento interativo.
-    - Seletores de Perfil -> Objetivo: Recomendar -> Método: Botões de perfil com JS -> Interação: O clique no botão navega para a seção de planos e destaca o plano recomendado. Justificativa: Agiliza a jornada do usuário, oferecendo uma recomendação direta e personalizada com base em seu uso.
-    - Benefícios Principais -> Objetivo: Informar -> Método: Flexbox HTML/CSS com ícones Unicode -> Interação: Nenhuma. Justificativa: Informação complementar de forma clara e scannable.
-    - CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
@@ -50,7 +41,11 @@
             height: 300px;
             max-height: 40vh;
         }
-         @media (min-width: 768px) { .chart-container { height: 400px; } }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
         .plan-card {
             transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
             cursor: pointer;
@@ -60,24 +55,76 @@
             box-shadow: 0 20px 25px -5px rgba(0, 209, 93, 0.2), 0 10px 10px -5px rgba(0, 209, 93, 0.1);
             border-color: #00D15D;
         }
+
+        /* Classes para o cabeçalho fixo */
+        .fixed-header {
+            background-color: rgba(22, 27, 72, 0.9);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        /* Estilos para a imagem de fundo */
+        body.bg-fiber-optic {
+            background-image: url('https://sdmntprwestcentralus.oaiusercontent.com/files/00000000-d660-61fb-89e0-934184eb2da4/raw?se=2025-08-26T05%3A14%3A41Z&sp=r&sv=2024-08-04&sr=b&scid=e1214e20-a6ef-56e1-a027-2d6ea3426423&skoid=77636ecc-ad8d-44df-baa7-163b524a0261&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-08-26T02%3A40%3A25Z&ske=2025-08-27T02%3A40%3A25Z&sks=b&skv=2024-08-04&sig=x7%2B1/4CnQuQ2Y1IhqzUqzBqlQ4l31J5S2dzNoW2bzbM%3D');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        /* Estilos para o cabeçalho ajustado */
+        .giga-fibra-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            line-height: 1;
+        }
+        .giga-fibra-container h1 {
+            font-size: 3rem; /* Tamanho para mobile */
+            font-weight: 700; /* Extra bold */
+            text-align: center;
+        }
+        .giga-fibra-container h2 {
+            font-size: 0.75rem; /* Fonte menor */
+            font-weight: 400; /* Fonte mais fina */
+            margin-top: -0.4rem;
+        }
+        
+        @media (min-width: 768px) {
+            .giga-fibra-container h1 {
+                font-size: 4rem;
+            }
+			
+            .giga-fibra-container h2 {
+                font-size: 1.4rem;
+                margin-top: -0.4rem;
+				
+            }
+        }
     </style>
 </head>
-<body class="bg-giga-bg font-sans">
+<body class="bg-giga-bg font-sans bg-fiber-optic">
 
-    <div class="container mx-auto p-4 md:p-8">
+    <header class="fixed-header w-full p-4 md:p-8 top-0 z-10 text-white shadow-lg">
+        <div class="container mx-auto text-center">
+            <div class="giga-fibra-container">
+                <h1>
+                    GIGA<span class="text-giga-green italic">+</span>
+                </h1>
+                <h2>
+                    Fibra
+                </h2>
+            </div>
+            <p class="text-sm md:text-xl font-medium mt-2">A conexão que você merece, por um preço que cabe no seu bolso.</p>
+        </div>
+    </header>
 
-        <header class="text-center my-8 md:my-12">
-            <h1 class="text-4xl md:text-6xl font-black text-giga-dark-blue">
-                GIGA+ <span class="text-giga-green">Fibra</span>
-            </h1>
-            <p class="text-lg md:text-xl text-giga-blue mt-2">A conexão de verdade que você merece, por um preço que cabe no seu bolso.</p>
-        </header>
+    <div class="container mx-auto p-4 md:p-8 pt-24 md:pt-32">
 
         <main>
             <section id="plan-selector" class="mb-16 md:mb-24">
                 <div class="text-center mb-8">
-                    <h2 class="text-3xl font-bold text-giga-dark-blue">Qual plano é ideal para você?</h2>
-                    <p class="text-gray-600 mt-2">Selecione seu perfil de uso e veja nossa recomendação.</p>
+                    <h2 class="text-3xl font-bold text-white">Qual plano é ideal para você?</h2>
+                    <p class="text-gray-200 mt-2">Selecione seu perfil de uso e veja nossa recomendação.</p>
                 </div>
                 <div class="flex justify-center flex-wrap gap-3 md:gap-4 mb-10">
                     <button onclick="recommendPlan('uso básico')" class="px-6 py-2 bg-giga-white border-2 border-gray-200 rounded-full font-semibold text-giga-blue hover:bg-giga-green hover:text-white hover:border-giga-green transition-all">🏠 Uso Básico</button>
@@ -86,11 +133,11 @@
                     <button onclick="recommendPlan('famílias grandes e heavy users')" class="px-6 py-2 bg-giga-white border-2 border-gray-200 rounded-full font-semibold text-giga-blue hover:bg-giga-green hover:text-white hover:border-giga-green transition-all">👨‍👩‍👧‍👦 Família & Muitos Usuários</button>
                 </div>
             </section>
-            
+
             <section id="dashboard" class="mb-16 md:mb-24">
                 <div class="text-center mb-8">
-                    <h2 class="text-3xl font-bold text-giga-dark-blue">Compare as Velocidades</h2>
-                    <p class="text-gray-600 mt-2">Clique em um plano para visualizar sua performance de download e upload.</p>
+                    <h2 class="text-3xl font-bold text-white">Compare as Velocidades</h2>
+                    <p class="text-gray-200 mt-2">Clique em um plano para visualizar sua performance de download e upload.</p>
                 </div>
                 <div class="bg-white p-4 md:p-6 rounded-2xl shadow-lg">
                     <div class="chart-container">
@@ -98,7 +145,7 @@
                     </div>
                 </div>
             </section>
-            
+
             <section id="planos-grid" class="mb-16 md:mb-24">
                 <div id="plans-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
                 </div>
@@ -131,16 +178,16 @@
             </section>
 
             <section id="final-cta" class="text-center py-12">
-                <h2 class="text-3xl md:text-4xl font-bold text-giga-dark-blue">Pronto para ter uma conexão de verdade?</h2>
-                <p class="text-gray-600 mt-2 mb-8 text-lg">Fale com nossa equipe e verifique a cobertura para sua região em poucos minutos.</p>
+                <h2 class="text-3xl md:text-4xl font-bold text-white">Pronto para ter uma conexão de verdade?</h2>
+                <p class="text-gray-200 mt-2 mb-8 text-lg">Fale com nossa equipe e verifique a cobertura para sua região em poucos minutos.</p>
                 <a href="https://wa.me/5522997907703" target="_blank" class="bg-giga-green text-white font-bold text-xl px-10 py-4 rounded-full shadow-lg hover:bg-green-600 transition-transform transform hover:scale-105 inline-block">
                     Conversar no WhatsApp
                 </a>
             </section>
         </main>
 
-        <footer class="text-center text-gray-500 border-t pt-8 mt-8">
-            <p>&copy; 2025 GIGA+ Fibra. Todos os direitos reservados.</p>
+        <footer class="text-center text-gray-400 border-t pt-8 mt-8 border-gray-700">
+            <p>&copy; 2025 Revendedor autorizado GIGA+ Fibra. Todos os direitos reservados.</p>
         </footer>
 
     </div>
@@ -290,7 +337,7 @@
                 updateChartHighlight(planIndex);
             }
         };
-        
+
         const recommendPlan = (useCase) => {
             const recommendedPlan = plansData.find(p => p.useCase === useCase);
             if (recommendedPlan) {
@@ -304,7 +351,6 @@
             createPlanCards();
             createChart();
         };
-
     </script>
 </body>
 </html>
