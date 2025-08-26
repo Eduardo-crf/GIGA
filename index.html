@@ -82,7 +82,7 @@
                 <div class="flex justify-center flex-wrap gap-3 md:gap-4 mb-10">
                     <button onclick="recommendPlan('uso básico')" class="px-6 py-2 bg-giga-white border-2 border-gray-200 rounded-full font-semibold text-giga-blue hover:bg-giga-green hover:text-white hover:border-giga-green transition-all">🏠 Uso Básico</button>
                     <button onclick="recommendPlan('streaming e home office')" class="px-6 py-2 bg-giga-white border-2 border-gray-200 rounded-full font-semibold text-giga-blue hover:bg-giga-green hover:text-white hover:border-giga-green transition-all">👨‍💻 Home Office & Streaming</button>
-                    <button onclick="recommendPlan('gamers e criadores de conteúdo')" class="px-6 py-2 bg-giga-white border-2 border-gray-200 rounded-full font-semibold text-giga-blue hover:bg-giga-green hover:text-white hover:border-giga-green transition-all">🎮 Gamers & Criadores de Conteúdo</button>
+                    <button onclick="recommendPlan('gamers e criadores de conteúdo')" class="px-6 py-2 bg-giga-white border-2 border-gray-200 rounded-full font-semibold text-giga-blue hover:bg-giga-green hover:text-white hover:border-giga-green transition-all">🎮 Gamers & Criadores de conteúdo</button>
                     <button onclick="recommendPlan('famílias grandes e heavy users')" class="px-6 py-2 bg-giga-white border-2 border-gray-200 rounded-full font-semibold text-giga-blue hover:bg-giga-green hover:text-white hover:border-giga-green transition-all">👨‍👩‍👧‍👦 Família & Muitos Usuários</button>
                 </div>
             </section>
@@ -147,10 +147,10 @@
 
     <script>
         const plansData = [
-            { id: '400', name: '400 MEGA', download: 400, upload: 200, price: '79,99', originalPrice: '99,99', wifi6: false, description: 'Ideal para redes sociais, e-mails e vídeos em HD.', useCase: 'uso básico' },
+            { id: '400', name: '400 MEGA', download: 400, upload: 200, price: '79,99', originalPrice: '99,99', wifi6: false, description: 'Ideal para redes sociais, e-mails e vídeos em HD.', useCase: 'uso básico (abrange todo tipo de uso, porém a menos usuários simultâneos)' },
             { id: '600', name: '600 MEGA', download: 600, upload: 300, price: '99,99', originalPrice: '119,99', wifi6: true, description: 'Perfeito para streaming 4K, home office e vários aparelhos.', useCase: 'streaming e home office' },
             { id: '800', name: '800 MEGA', download: 800, upload: 400, price: '119,99', originalPrice: '139,99', wifi6: true, description: 'Alta performance para jogos online e uploads pesados.', useCase: 'gamers e criadores de conteúdo' },
-            { id: '920', name: 'GIGA+', download: 920, upload: 460, price: '139,99', originalPrice: '159,99', wifi6: true, speedLabel: '920 MEGA', description: 'A experiência máxima de velocidade para quem quer tudo.', useCase: 'famílias grandes e Muitos Usuários' }
+            { id: '920', name: 'GIGA+', download: 920, upload: 460, price: '139,99', originalPrice: '159,99', wifi6: true, speedLabel: '920 MEGA', description: 'A experiência máxima de velocidade para quem quer tudo.', useCase: 'famílias grandes e muitos usuários' }
         ];
 
         const plansGrid = document.getElementById('plans-grid');
